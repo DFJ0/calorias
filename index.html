@@ -191,7 +191,7 @@ input:focus, select:focus { border-color: var(--green); }
   <button class="tab" onclick="showTab('historico')">Histórico</button>
   <button class="tab" onclick="showTab('perfil')">Perfil</button>
   <button class="tab" onclick="showTab('resumo')">Resumo</button>
-  <button class="tab" onclick="showTab('instalar')">Instalar</button>
+  <button class="tab" onclick="showTab('foto')">Foto</button>
 </div>
 
 <div class="content">
@@ -308,52 +308,32 @@ input:focus, select:focus { border-color: var(--green); }
     <button class="btn-secondary" onclick="clearLog()" style="margin-top:4px">Limpar registo do dia</button>
   </div>
 
-  <!-- INSTALAR -->
-  <div id="tab-instalar" class="section">
-    <div class="install-banner">
-      <h3>Adicionar ao ecrã inicial</h3>
-      <p>Instala esta app como atalho e abre-a diretamente sem precisar do browser.</p>
+  
+  <!-- TAB FOTO -->
+<div id="tab-foto" class="section">
+    <div class="card" style="border: 1px dashed var(--blue); background: var(--blue-dim);">
+        <div class="label" style="color: var(--blue)">Chave API (Gemini/Anthropic)</div>
+        <input type="password" id="api-key" placeholder="Cola aqui a tua chave sk-..." style="margin-bottom: 10px;">
+        <button class="btn-secondary" onclick="saveApiKey()" style="font-size: 12px; padding: 8px;">Guardar Chave no Telefone</button>
     </div>
 
-    <div class="label" style="margin-bottom:10px">iPhone / iPad (Safari)</div>
-    <div class="card" style="margin-bottom:16px">
-      <div style="display:flex;flex-direction:column;gap:12px">
-        <div style="display:flex;gap:12px;align-items:flex-start">
-          <div style="width:28px;height:28px;background:var(--blue-dim);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--blue);font-weight:500;font-size:13px">1</div>
-          <div><div style="font-size:14px;font-weight:500;margin-bottom:3px">Abrir no Safari</div><div style="font-size:12px;color:var(--text2)">Certifica-te que estás a usar o Safari (não Chrome nem outro browser).</div></div>
-        </div>
-        <div style="display:flex;gap:12px;align-items:flex-start">
-          <div style="width:28px;height:28px;background:var(--blue-dim);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--blue);font-weight:500;font-size:13px">2</div>
-          <div><div style="font-size:14px;font-weight:500;margin-bottom:3px">Tocar em Partilhar</div><div style="font-size:12px;color:var(--text2)">Toca no ícone de partilha (quadrado com seta para cima) na barra inferior do Safari.</div></div>
-        </div>
-        <div style="display:flex;gap:12px;align-items:flex-start">
-          <div style="width:28px;height:28px;background:var(--blue-dim);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--blue);font-weight:500;font-size:13px">3</div>
-          <div><div style="font-size:14px;font-weight:500;margin-bottom:3px">Adicionar ao ecrã principal</div><div style="font-size:12px;color:var(--text2)">Desliza e toca em "Adicionar ao ecrã de início". Confirma com "Adicionar".</div></div>
-        </div>
-      </div>
+    <div class="card" style="text-align: center; padding: 40px 20px; border: 2px dashed var(--border2); margin-top: 15px;">
+        <input type="file" id="camera-input" accept="image/*" capture="environment" style="display: none;" onchange="handleImage(event)">
+        <label for="camera-input" style="cursor: pointer;">
+            <span style="font-size: 40px; display: block; margin-bottom: 10px;">📸</span>
+            <strong>Tirar foto ou escolher da galeria</strong>
+            <p style="font-size: 12px; color: var(--text2); margin-top: 8px;">A IA vai identificar os alimentos e porções.</p>
+        </label>
     </div>
 
-    <div class="label" style="margin-bottom:10px">Android (Chrome)</div>
-    <div class="card" style="margin-bottom:16px">
-      <div style="display:flex;flex-direction:column;gap:12px">
-        <div style="display:flex;gap:12px;align-items:flex-start">
-          <div style="width:28px;height:28px;background:var(--green-dim);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--green);font-weight:500;font-size:13px">1</div>
-          <div><div style="font-size:14px;font-weight:500;margin-bottom:3px">Abrir no Chrome</div><div style="font-size:12px;color:var(--text2)">Abre este ficheiro HTML no Google Chrome.</div></div>
+    <div id="ai-results" style="margin-top: 20px; display: none;">
+        <div class="label">Resultados da Análise</div>
+        <div id="ai-loading" style="display: none; text-align: center; padding: 20px;">
+            <div class="loader"></div> 
+            <p>A analisar refeição...</p>
         </div>
-        <div style="display:flex;gap:12px;align-items:flex-start">
-          <div style="width:28px;height:28px;background:var(--green-dim);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--green);font-weight:500;font-size:13px">2</div>
-          <div><div style="font-size:14px;font-weight:500;margin-bottom:3px">Menu de opções</div><div style="font-size:12px;color:var(--text2)">Toca nos três pontos (⋮) no canto superior direito do Chrome.</div></div>
-        </div>
-        <div style="display:flex;gap:12px;align-items:flex-start">
-          <div style="width:28px;height:28px;background:var(--green-dim);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--green);font-weight:500;font-size:13px">3</div>
-          <div><div style="font-size:14px;font-weight:500;margin-bottom:3px">Adicionar ao ecrã inicial</div><div style="font-size:12px;color:var(--text2)">Seleciona "Adicionar à tela inicial" ou "Instalar app". Confirma.</div></div>
-        </div>
-      </div>
+        <div id="ai-items-list"></div>
     </div>
-
-    <div class="tip">Os teus dados ficam guardados no telemóvel mesmo sem internet. A app abre em ecrã completo sem barra do browser.</div>
-  </div>
-
 </div>
 
 <!-- Save button (fixed bottom) -->
@@ -371,7 +351,7 @@ const PRESETS=[
   {name:"Banana",cal:89,prot:1.1,carb:23,fat:0.3,unit:"1 un"},
   {name:"Pão de forma",cal:79,prot:2.7,carb:15,fat:1,unit:"1 fatia"},
   {name:"Salada mista",cal:25,prot:1.5,carb:4,fat:0.3,unit:"100g"},
-  {name:"Leite meio-gordo",cal:47,prot:3.2,carb:4.8,fat:1.5,unit:"100ml"},
+  {name:"Leite magro",cal:35,prot:3.5,carb:5.0,fat:0.1,unit:"100ml"},
   {name:"Iogurte natural",cal:59,prot:3.5,carb:4.7,fat:3.3,unit:"1 un"},
   {name:"Maçã",cal:52,prot:0.3,carb:14,fat:0.2,unit:"1 un"},
   {name:"Atum em lata",cal:116,prot:26,carb:0,fat:1,unit:"100g"},
@@ -597,9 +577,103 @@ PRESETS.forEach(p=>{
   grid.appendChild(btn);
 });
 
+  // Guardar e Carregar API Key
+function saveApiKey() {
+    const key = document.getElementById('api-key').value;
+    localStorage.setItem('calorias_api_key', key);
+    toast('Chave guardada com sucesso!');
+}
+
+async function handleImage(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const apiKey = localStorage.getItem('calorias_api_key');
+    if (!apiKey) {
+        toast('Por favor, insere a tua Chave API primeiro.');
+        return;
+    }
+
+    document.getElementById('ai-results').style.display = 'block';
+    document.getElementById('ai-loading').style.display = 'block';
+    document.getElementById('ai-items-list').innerHTML = '';
+
+    // Converter imagem para Base64
+    const base64Image = await toBase64(file);
+    
+    analyzeWithAI(base64Image, apiKey);
+}
+
+function toBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = error => reject(error);
+    });
+}
+
+async function analyzeWithAI(base64, key) {
+    const prompt = "Analisa esta foto de comida. Lista os alimentos e estima para cada um: calorias, proteínas, hidratos e gorduras (porção normal de prato). Responde APENAS em JSON no formato: [{\"name\": \"alimento\", \"cal\": 100, \"prot\": 10, \"carb\": 20, \"fat\": 5}]";
+
+    try {
+        // Exemplo usando o endpoint do Gemini (Google)
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [
+                        { text: prompt },
+                        { inline_data: { mime_type: "image/jpeg", data: base64 } }
+                    ]
+                }]
+            })
+        });
+
+        const data = await response.json();
+        const textResponse = data.candidates[0].content.parts[0].text;
+        // Limpar possíveis marcações de Markdown do JSON
+        const cleanJson = textResponse.replace(/```json|```/g, "");
+        const items = JSON.parse(cleanJson);
+
+        renderAIResults(items);
+    } catch (e) {
+        console.error(e);
+        toast('Erro na análise. Verifica a chave API.');
+    } finally {
+        document.getElementById('ai-loading').style.display = 'none';
+    }
+}
+
+function renderAIResults(items) {
+    const list = document.getElementById('ai-items-list');
+    list.innerHTML = items.map((item, i) => `
+        <div class="food-item" style="border-left: 3px solid var(--blue)">
+            <div>
+                <div class="food-name">${item.name}</div>
+                <div class="food-detail">${item.prot}g P · ${item.carb}g H · ${item.fat}g G</div>
+            </div>
+            <div class="food-right">
+                <span class="food-cal">${item.cal}</span>
+                <button class="btn-add-inline" onclick='addAIFood(${JSON.stringify(item)})'>+</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function addAIFood(item) {
+    foodLog.push(item);
+    save();
+    renderLog();
+    updateProgress();
+    toast(item.name + ' adicionado!');
+}
+
 loadProfile();
 renderLog();
 updateProgress();
+  
 </script>
 </body>
 </html>
