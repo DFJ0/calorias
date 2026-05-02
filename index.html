@@ -384,11 +384,15 @@ document.getElementById('hdr-date').textContent=d.getDate()+'/'+(d.getMonth()+1)
 
 function showTab(t){
   document.querySelectorAll('.tab').forEach((el,i)=>{
-    el.classList.toggle('active',['hoje','historico','perfil','resumo','instalar'][i]===t);
+    // Adicionámos 'foto' na lista abaixo (na segunda posição, por exemplo)
+    el.classList.toggle('active',['hoje','foto','historico','perfil','resumo'][i]===t);
   });
   document.querySelectorAll('.section').forEach(el=>el.classList.remove('active'));
   document.getElementById('tab-'+t).classList.add('active');
+  
+  // Esconder o botão de guardar se estiveres na aba da foto ou outras
   document.getElementById('save-btn-wrap').style.display=t==='hoje'?'block':'none';
+  
   if(t==='resumo')updateSummary();
   if(t==='historico')renderHistory();
 }
