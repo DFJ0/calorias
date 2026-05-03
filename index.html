@@ -517,11 +517,25 @@ function updateProgress(){
 
 function renderLog(){
   const el=document.getElementById('food-list');
+  onclick="removeFood(${i})"
   if(!foodLog.length){el.innerHTML='<div class="empty"><span class="empty-icon">🥗</span>Nenhum alimento adicionado ainda.</div>';return;}
   el.innerHTML=foodLog.map((f,i)=>`<div class="food-item"><div><div class="food-name">${f.name}</div><div class="food-detail">${f.prot}g prot · ${f.carb}g hidr · ${f.fat}g gord</div></div><div class="food-right"><span class="food-cal">${Math.round(f.cal)}</span><button class="food-del" onclick="removeFood(${i})">×</button></div></div>`).join('');
 }
 
-function removeFood(i){foodLog.splice(i,1);save();renderLog();updateProgress();}
+function removeFood(i) {
+    // Remove o item do array pelo index
+    foodLog.splice(i, 1);
+    
+    // Guarda a alteração no iPhone
+    save();
+    
+    // Atualiza todos os ecrãs
+    renderLog();
+    updateProgress();
+    updateSummary(); 
+    
+    toast('Item removido');
+}
 
 function addPreset(p){foodLog.push({...p});save();renderLog();updateProgress();toast(p.name+' adicionado');}
 
@@ -595,11 +609,29 @@ function toggleDay(i){
   const el=document.getElementById('dd-'+i);
   el.style.display=el.style.display==='block'?'none':'block';
 }
+  
 
-function updateSummary(){
-  const total=foodLog.reduce((s,f)=>s+f.cal,0);
-  const prot=foodLog.reduce((s,f)=>s+f.prot,0);
-  const carb=foodLog.reduce((s,f)=>s+f.carb,0);
+function updateSummary() {
+    const sl = document.getElementById('summary-list');
+    
+    if (foodLog.length === 0) {
+        sl.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text3)">Nenhum alimento registado hoje.</div>';
+        return;
+    }
+
+    sl.innerHTML = foodLog.map((f, i) => `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border);">
+            <div>
+                <div style="font-size:14px;">${f.name}</div>
+                <div style="font-size:11px; color:var(--text2);">${f.cal} kcal</div>
+            </div>
+            <button onclick="removeFood(${i})" style="background:none; border:1px solid var(--border2); color:var(--red); border-radius:50%; width:24px; height:24px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:14px;">×</button>
+        </div>
+    `).join('');
+}
+/*function updateSummary(){
+const prot=foodLog.reduce((s,f)=>s+f.prot,0);
+ const carb=foodLog.reduce((s,f)=>s+f.carb,0);
   const fat=foodLog.reduce((s,f)=>s+f.fat,0);
   const tot=(prot*4)+(carb*4)+(fat*9)||1;
   document.getElementById('r-prot').textContent=Math.round(prot)+'g';
@@ -610,7 +642,7 @@ function updateSummary(){
   document.getElementById('r-fat-pct').textContent=Math.round((fat*9/tot)*100)+'%';
   const sl=document.getElementById('summary-list');
   sl.innerHTML=foodLog.length?foodLog.map(f=>`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px"><span>${f.name}</span><span style="font-weight:500;font-family:var(--mono);color:var(--green)">${Math.round(f.cal)}</span></div>`).join(''):'<div class="empty">Nenhum alimento registado hoje.</div>';
-}
+}*/
 
 function clearLog(){
   if(!confirm('Limpar o registo de hoje?'))return;
